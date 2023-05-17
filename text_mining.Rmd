@@ -1,0 +1,156 @@
+---
+title: "Tez"
+output: html_document
+date: "2023-01-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE)
+```
+
+
+```{r}
+library(data.table)
+haber<- read.table(file= "C:/Users/lenovo/OneDrive/Masaüstü/haber.txt", header = TRUE)
+```
+
+```{r}
+library(tibble)
+haber_df<-tibble(line=1:130, text=haber)
+```
+
+```{r}
+library(tm)
+library(readr)
+```
+
+```{r}
+stop_words <- readLines("C:/Users/lenovo/Downloads/ref.StopWordListTR.csv")
+stop_words2<-readLines("C:/Users/lenovo/Downloads/stopwords-tr.txt")
+```
+
+```{r}
+temiz_haber<- removeWords(haber_df$text$text, stop_words)
+```
+
+
+```{r}
+temiz_text<-tolower(removeNumbers(removePunctuation(haber_df$text$text)))
+```
+
+```{r}
+temiz_text <- stripWhitespace(temiz_text)
+head(temiz_text)
+```
+
+```{r}
+library(SnowballC)
+library(RColorBrewer)
+```
+
+```{r}
+temiz_text1<-tibble(1:130, text= temiz_text)
+```
+
+```{r}
+library(tidytext)
+library(stopwords)
+library(stringr)
+library(magrittr)
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+haber1<-temiz_text1  %>%
+  unnest_tokens(word,text) %>%
+filter(!word %in% stopwords(language = "tr", source= "stopwords-iso"))
+```
+
+```{r}
+library(DT)
+sayi<-haber1 %>% group_by(word) %>% count() %>% arrange(desc(n))
+sayi<-sayi %>% add_column(id=1:NROW(sayi),.before = "word")
+sayi %>% head(50) %>% datatable( colnames = c("kelime" = "word", "frekans"="n"))
+```
+
+```{r}
+library(pastecs)
+library(pander)
+library(sentimentr)
+polarite<-sentiment(haber1$word)
+
+stat.desc(polarite$sentiment, basic=T) %>% pander()
+```
+
+```{r}
+haber1_count<-haber1%>%count(word, sort = TRUE)
+```
+
+```{r}
+library(wordcloud2)
+wordcloud2(data= haber1_count,
+           color= "random-light",
+           backgroundColor = "grey25",
+           size= 0.6)
+```
+
+```{r}
+library(arules)
+library(arulesViz)
+library(RColorBrewer)
+```
+
+```{r}
+trans = as(haber1, "transactions")
+trans
+```
+
+```{r}
+itemFrequencyPlot(trans,topN=10,main="Item Frquency")
+```
+
+```{r}
+rules=apriori(trans,parameter=list(supp=0.001, confidence=0.5))
+```
+
+```{r}
+sort_rules=sort(rules,by="confidence",decreasing=TRUE)
+inspect(head(sort_rules,n=10))
+```
+
+```{r}
+subrules=head(rules,n=10,by="confidence")
+plot(subrules,method="graph")
+```
+```{r}
+negative_words<-readLines("C:/Users/lenovo/Downloads/TurkishSentiment-negative.txt")
+positive_words<-readLines("C:/Users/lenovo/Downloads/TurkishSentiment-positive.txt")
+```
+```{r}
+library(qdap)
+turkce_polarity.frame<-sentiment_frame(c(positive.words, positive_words),c(negative.words,negative_words))
+```
+
+```{r}
+deamplifiers <- c( "zar zor" , "hafiften" ,"az","zorlukla","küçük","bir tek","tek tük", "nadiren", "biraz", "seyrek", "ara sıra", "çok az", "çok küçük")
+
+amplifiers <- c("şiddetli", "şiddetle", "belirli", "kesinlikle", "müthiş bir biçimde", "derinden", "kesin", "muazzam", "çok" , "aşırı" ,"son derece","harika" , "büyük ölçüde", "ağır şekilde" , "ağır", "yüksek" , "büyük ölçüde", "kocaman", "oldukça" , "engin", "son derece" , "hesaplanamaz", "hesapsız" ,"büyük" ,"kitlesel" , "belirli", "özellikle" ,"amaç" ,"kasıtlı olarak", "epeyce", "gerçek" ,"ciddi", "ciddi anlamda" , "önemli" , "önemli ölçüde" , "elbette" , "kesinlikle" , "muazzam", "birçok" , "gerçekten", "bir çok", "daha", "sabahtan beri")
+```
+
+
+```{r}
+haber_kutupluluk_text <- polarity( text.var = temiz_text, polarity.frame = turkce_polarity.frame, deamplifiers = deamplifiers, amplifiers = amplifiers, amplifier.weight = 0.8 )
+```
+
+```{r}
+head(haber_kutupluluk_text[["all"]])
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(haber_kutupluluk_text$all, aes(x=polarity, y= ..density..)) +
+  geom_histogram(binwidth = 0.25, fill= "steelblue", color= "orange", alpha=0.5, size=0.75) +
+  geom_density()
+```
