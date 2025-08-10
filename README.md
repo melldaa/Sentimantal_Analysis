@@ -16,7 +16,7 @@ The dataset contains Turkish news texts, and the workflow includes:
 - haber.txt → Raw news text data.
 - ref.StopWordListTR.csv and stopwords-tr.txt → Turkish stopword lists.
 - TurkishSentiment-positive.txt and TurkishSentiment-negative.txt → Lists of positive and negative Turkish sentiment words.
-- Sentimental_analiysis.Rmd → R Markdown file containing all the code, analysis, and visualizations.
+- text_mining.Rmd → R Markdown file containing all the code, analysis, and visualizations.
 
 ## 📈 Example Output
 - Word Cloud: Highlights the most common Turkish words in the dataset.
