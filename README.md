@@ -18,10 +18,13 @@ The dataset contains Turkish news texts, and the workflow includes:
 - TurkishSentiment-positive.txt and TurkishSentiment-negative.txt → Lists of positive and negative Turkish sentiment words.
 - text_mining.Rmd → R Markdown file containing all the code, analysis, and visualizations.
 
-## 📈 Example Output
-- Word Cloud: Highlights the most common Turkish words in the dataset.
-- Sentiment Histogram: Shows distribution of positive/negative polarity.
-- Association Graph: Displays relationships between frequent word pairs.
+## 📈 Results
+The analysis of Turkish news articles revealed several key insights:
+Word Frequency: The most frequently occurring words in the dataset were related to current events, politics, and economic terms, indicating the strong presence of these topics in the selected news corpus.
+Sentiment Analysis: The polarity analysis showed that the overall tone of the news articles was predominantly neutral to slightly negative, with negative sentiment being driven by words associated with crises, conflicts, and economic downturns, while positive sentiment terms were mostly related to development, achievements, and cultural events.
+Association Rules: Market basket analysis highlighted significant co-occurrence patterns between certain words, suggesting common narrative structures or thematic clustering in the articles.
+Visualization Outcomes: Word clouds and frequency plots made it visually evident which terms dominate Turkish media discourse, while bar plots and graphs confirmed the distribution of sentiment and thematic groupings.
+Overall, the results show that Turkish media content in the analyzed dataset leans toward reporting impactful and often challenging events, with sentiment patterns reflecting the socio-political climate of the time. This project demonstrates how text mining and sentiment analysis can uncover both quantitative and qualitative aspects of media coverage.
 
 ## 📬 Author
 Prepared by: Melda Korkudan
